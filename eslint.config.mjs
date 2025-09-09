@@ -12,7 +12,8 @@ export default [
         suite: 'readonly',
         test: 'readonly',
         __dirname: 'readonly',
-        require: 'readonly' // Add Node.js require
+        require: 'readonly',
+        console: 'readonly' // Add Node.js console
       }
     },
     plugins: {
@@ -29,7 +30,8 @@ export default [
   {
     files: ['src/test/**/*.ts'], // Test-specific rules
     rules: {
-      '@typescript-eslint/no-var-requires': 'off' // Allow require in tests for memfs
+      '@typescript-eslint/no-var-requires': 'off',
+      'no-console': 'off' // Allow console in tests for debugging
     }
   }
 ];
