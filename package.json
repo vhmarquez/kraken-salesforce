@@ -1,19 +1,13 @@
 {
-  "name": "kraken-salesforce",
+  "name": "salesforce-grok-accelerator",
   "displayName": "Salesforce Grok Accelerator",
   "description": "Accelerate Salesforce development with Grok AI, CLI, and SFDX integration.",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.82.0"
   },
-  "categories": [
-    "Programming Languages",
-    "Extension Packs"
-  ],
-  "activationEvents": [
-    "onStartupFinished",
-    "onCommand:salesforceGrok.helloWorld"
-  ],
+  "categories": ["Programming Languages", "Extension Packs"],
+  "activationEvents": ["onStartupFinished", "onCommand:salesforceGrok.helloWorld"],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -47,6 +41,6 @@
     "esbuild": "^0.20.0"
   },
   "resolutions": {
-    "minimatch": "^3.1.2"
+    "minimatch": "3.1.2"
   }
 }
