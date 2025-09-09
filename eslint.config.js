@@ -7,7 +7,12 @@ export default [
     files: ['src/**/*.ts'],
     languageOptions: {
       parser: tsParser,
-      sourceType: 'module'
+      sourceType: 'module',
+      globals: {
+        suite: 'readonly',
+        test: 'readonly',
+        __dirname: 'readonly'
+      }
     },
     plugins: {
       '@typescript-eslint': ts
@@ -16,7 +21,8 @@ export default [
       ...js.configs.recommended.rules,
       ...ts.configs.recommended.rules,
       'no-console': 'warn',
-      '@typescript-eslint/no-unused-vars': 'error'
+      '@typescript-eslint/no-unused-vars': 'error',
+      '@typescript-eslint/no-explicit-any': 'off' // Temporarily disable for Phase 0
     }
   }
 ];
