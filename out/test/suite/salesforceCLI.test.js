@@ -25,6 +25,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const assert = __importStar(require("assert"));
 const salesforceCli_1 = require("../../utils/salesforceCli");
+const cp = __importStar(require("child_process"));
+const util = __importStar(require("util"));
+const exec = util.promisify(cp.exec);
 // Mock output channel
 class MockOutputChannel {
     constructor() {
@@ -39,7 +42,14 @@ class MockOutputChannel {
     replace() { }
 }
 suite('SalesforceCli Test Suite', () => {
-    test('execute should run sfdx command', async () => {
+    test('execute should run sfdx command', async function () {
+        // Check if Salesforce CLI is installed
+        try {
+            await exec('sfdx --version');
+        }
+        catch (err) {
+            this.skip(); // Skip test if CLI is not installed
+        }
         const mockChannel = new MockOutputChannel();
         const sfCli = new salesforceCli_1.SalesforceCli(mockChannel);
         const { stdout } = await sfCli.execute('version');

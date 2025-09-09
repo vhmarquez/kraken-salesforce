@@ -27,21 +27,26 @@ const assert = __importStar(require("assert"));
 const sfdxContext_1 = require("../../utils/sfdxContext");
 const memfs_1 = require("memfs");
 const path = __importStar(require("path"));
+const fs = __importStar(require("fs"));
 suite('SfdxContext Test Suite', () => {
     test('getProjectJson should parse sfdx-project.json', () => {
         const vol = new memfs_1.Volume();
-        const fs = (0, memfs_1.createFsFromVolume)(vol);
+        const mockFs = (0, memfs_1.createFsFromVolume)(vol);
         const mockPath = '/mock-project';
-        fs.mkdirSync(mockPath, { recursive: true });
-        fs.writeFileSync(path.join(mockPath, 'sfdx-project.json'), JSON.stringify({ packageDirectories: [{ path: 'force-app' }] }));
-        // Mock fs with memfs
-        const originalFs = require('fs');
-        require('fs').__proto__ = fs;
-        const context = new sfdxContext_1.SfdxContext(mockPath);
-        const json = context.getProjectJson();
-        assert.deepStrictEqual(json?.packageDirectories, [{ path: 'force-app' }]);
-        // Restore fs
-        require('fs').__proto__ = originalFs;
+        mockFs.mkdirSync(mockPath, { recursive: true });
+        mockFs.writeFileSync(path.join(mockPath, 'sfdx-project.json'), JSON.stringify({ packageDirectories: [{ path: 'force-app' }] }));
+        // Mock fs module
+        const originalFs = { ...fs };
+        Object.assign(fs, mockFs);
+        try {
+            const context = new sfdxContext_1.SfdxContext(mockPath);
+            const json = context.getProjectJson();
+            assert.deepStrictEqual(json?.packageDirectories, [{ path: 'force-app' }]);
+        }
+        finally {
+            // Restore fs
+            Object.assign(fs, originalFs);
+        }
     });
 });
 //# sourceMappingURL=sfdxContext.test.js.map

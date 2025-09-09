@@ -1,9 +1,12 @@
 import * as assert from 'assert';
 import { SalesforceCli } from '../../utils/salesforceCli';
-import * as vscode from 'vscode';
+import * as cp from 'child_process';
+import * as util from 'util';
+
+const exec = util.promisify(cp.exec);
 
 // Mock output channel
-class MockOutputChannel implements vscode.OutputChannel {
+class MockOutputChannel {
   name = 'mock';
   append(): void {}
   appendLine(): void {}
@@ -15,7 +18,14 @@ class MockOutputChannel implements vscode.OutputChannel {
 }
 
 suite('SalesforceCli Test Suite', () => {
-  test('execute should run sfdx command', async () => {
+  test('execute should run sfdx command', async function () {
+    // Check if Salesforce CLI is installed
+    try {
+      await exec('sfdx --version');
+    } catch (err) {
+      this.skip(); // Skip test if CLI is not installed
+    }
+
     const mockChannel = new MockOutputChannel();
     const sfCli = new SalesforceCli(mockChannel);
     const { stdout } = await sfCli.execute('version');
