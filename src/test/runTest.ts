@@ -34,14 +34,8 @@ export async function run(): Promise<void> {
     console.log(`Found test files: ${files.length ? files : 'None'}`);
 
     if (files.length === 0) {
-      console.log('No test files found. Checking synchronously...');
-      const syncFiles = glob.sync('**/*.test.js', { cwd: testsRoot });
-      console.log(`Synchronous check found: ${syncFiles.length ? syncFiles : 'None'}`);
-      if (syncFiles.length === 0) {
-        console.log('No test files found. Exiting.');
-        return;
-      }
-      files.push(...syncFiles);
+      console.log('No test files found. Exiting.');
+      return;
     }
 
     // Add test files to Mocha
