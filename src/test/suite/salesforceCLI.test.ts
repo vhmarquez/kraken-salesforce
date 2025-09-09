@@ -5,12 +5,13 @@ import * as vscode from 'vscode';
 // Mock output channel
 class MockOutputChannel implements vscode.OutputChannel {
   name = 'mock';
-  append(value: string): void {}
-  appendLine(value: string): void {}
+  append(): void {}
+  appendLine(): void {}
   clear(): void {}
   show(): void {}
   hide(): void {}
   dispose(): void {}
+  replace(): void {}
 }
 
 suite('SalesforceCli Test Suite', () => {

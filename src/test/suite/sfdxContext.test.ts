@@ -1,7 +1,6 @@
 import * as assert from 'assert';
 import { SfdxContext } from '../../utils/sfdxContext';
-import { Volume } from 'memfs';
-import { create } from 'memfs/lib/volume';
+import { Volume, create } from 'memfs';
 import * as path from 'path';
 
 suite('SfdxContext Test Suite', () => {
