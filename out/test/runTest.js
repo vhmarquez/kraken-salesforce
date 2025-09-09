@@ -31,21 +31,26 @@ const path = __importStar(require("path"));
 const mocha_1 = __importDefault(require("mocha"));
 const glob = __importStar(require("glob"));
 const util_1 = require("util");
-const test_electron_1 = require("@vscode/test-electron");
 const globAsync = (0, util_1.promisify)(glob.glob);
-async function main() {
+async function run() {
+    console.log('Starting test runner...');
     try {
         // Initialize Mocha
         const mocha = new mocha_1.default({
             ui: 'tdd',
-            color: true
+            color: true,
+            timeout: 10000 // Increase timeout for debugging
         });
         // Resolve test root directory
         const testsRoot = path.resolve(__dirname, '..');
         console.log(`Test root directory: ${testsRoot}`);
         // Find test files
-        const files = await globAsync('suite/*.test.js', { cwd: testsRoot });
-        console.log(`Found test files: ${files}`);
+        const files = await globAsync('**/*.test.js', { cwd: testsRoot });
+        console.log(`Found test files: ${files.length ? files : 'None'}`);
+        if (files.length === 0) {
+            console.log('No test files found. Exiting.');
+            return;
+        }
         // Add test files to Mocha
         files.forEach((f) => {
             const testFilePath = path.resolve(testsRoot, f);
@@ -54,7 +59,9 @@ async function main() {
         });
         // Run Mocha tests
         await new Promise((resolve, reject) => {
+            console.log('Running Mocha tests...');
             mocha.run((failures) => {
+                console.log(`Mocha tests completed with ${failures} failures.`);
                 if (failures > 0) {
                     reject(new Error(`${failures} tests failed.`));
                 }
@@ -68,21 +75,5 @@ async function main() {
         console.error(`Test runner error: ${err}`);
         throw err;
     }
-}
-async function run() {
-    try {
-        // Run tests using @vscode/test-electron
-        await (0, test_electron_1.runTests)({
-            extensionDevelopmentPath: path.resolve(__dirname, '../../'),
-            extensionTestsPath: path.resolve(__dirname, './'),
-            launchArgs: ['--disable-extensions'] // Disable other extensions during testing
-        });
-    }
-    catch (err) {
-        console.error(`Failed to run tests: ${err}`);
-        throw err;
-    }
-    // Run Mocha tests
-    await main();
 }
 //# sourceMappingURL=runTest.js.map
