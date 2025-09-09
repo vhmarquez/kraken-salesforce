@@ -40,7 +40,11 @@ async function run() {
     const testsRoot = path.resolve(__dirname, '..');
     try {
         const files = await globAsync('**/*.test.js', { cwd: testsRoot });
-        files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)));
+        console.log(`Found test files: ${files}`); // Debug logging
+        files.forEach((f) => {
+            console.log(`Adding test file: ${f}`); // Debug logging
+            mocha.addFile(path.resolve(testsRoot, f));
+        });
         return new Promise((resolve, reject) => {
             mocha.run((failures) => {
                 if (failures > 0) {
@@ -53,6 +57,7 @@ async function run() {
         });
     }
     catch (err) {
+        console.error(`Error in test runner: ${err}`);
         return Promise.reject(err);
     }
 }

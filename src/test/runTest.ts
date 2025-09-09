@@ -15,7 +15,11 @@ export async function run(): Promise<void> {
 
   try {
     const files = await globAsync('**/*.test.js', { cwd: testsRoot });
-    files.forEach((f: string) => mocha.addFile(path.resolve(testsRoot, f)));
+    console.log(`Found test files: ${files}`); // Debug logging
+    files.forEach((f: string) => {
+      console.log(`Adding test file: ${f}`); // Debug logging
+      mocha.addFile(path.resolve(testsRoot, f));
+    });
 
     return new Promise((resolve, reject) => {
       mocha.run((failures: number) => {
@@ -27,6 +31,7 @@ export async function run(): Promise<void> {
       });
     });
   } catch (err) {
+    console.error(`Error in test runner: ${err}`);
     return Promise.reject(err);
   }
 }
