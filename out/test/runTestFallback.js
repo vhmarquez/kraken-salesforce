@@ -30,7 +30,7 @@ exports.run = run;
 const path = __importStar(require("path"));
 const mocha_1 = __importDefault(require("mocha"));
 async function run() {
-    console.log('Starting fallback test runner...');
+    console.log('Starting fallback test runner at: ', new Date().toISOString());
     const mocha = new mocha_1.default({
         ui: 'tdd',
         color: true,

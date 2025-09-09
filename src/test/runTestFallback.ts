@@ -2,7 +2,7 @@ import * as path from 'path';
 import Mocha from 'mocha';
 
 export async function run(): Promise<void> {
-  console.log('Starting fallback test runner...');
+  console.log('Starting fallback test runner at: ', new Date().toISOString());
 
   const mocha = new Mocha({
     ui: 'tdd',

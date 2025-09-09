@@ -13,7 +13,8 @@ export default [
         test: 'readonly',
         __dirname: 'readonly',
         require: 'readonly',
-        console: 'readonly' // Add Node.js console
+        console: 'readonly',
+        process: 'readonly' // Add Node.js process
       }
     },
     plugins: {
@@ -28,10 +29,10 @@ export default [
     }
   },
   {
-    files: ['src/test/**/*.ts'], // Test-specific rules
+    files: ['src/test/**/*.ts'],
     rules: {
       '@typescript-eslint/no-var-requires': 'off',
-      'no-console': 'off' // Allow console in tests for debugging
+      'no-console': 'off'
     }
   }
 ];
