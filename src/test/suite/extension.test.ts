@@ -6,7 +6,7 @@ const vscodeMock = {
     showInformationMessage: () => {}
   },
   extensions: {
-    getExtension: () => ({
+    getExtension: (extensionId: string) => ({
       activate: async () => {},
       isActive: true
     })
