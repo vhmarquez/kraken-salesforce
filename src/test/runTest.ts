@@ -7,15 +7,19 @@ import { promisify } from 'util';
 const globAsync = promisify(glob.glob);
 
 export async function run(): Promise<void> {
-  console.log('Starting test runner...');
+  console.log('Starting test runner at: ', new Date().toISOString());
 
   try {
+    // Verify Node.js environment
+    console.log(`Node version: ${process.version}`);
+    console.log(`Current working directory: ${process.cwd()}`);
+
     // Initialize Mocha
     console.log('Initializing Mocha...');
     const mocha = new Mocha({
       ui: 'tdd',
       color: true,
-      timeout: 10000
+      timeout: 15000
     });
 
     // Resolve test root directory
@@ -26,21 +30,25 @@ export async function run(): Promise<void> {
     if (!fs.existsSync(testsRoot)) {
       console.error(`Test root directory does not exist: ${testsRoot}`);
       return;
+    } else {
+      console.log(`Test root directory exists: ${testsRoot}`);
     }
 
     // Find test files
     console.log('Searching for test files...');
     const files = await globAsync('**/*.test.js', { cwd: testsRoot });
-    console.log(`Found test files: ${files.length ? files : 'None'}`);
+    console.log(`Found test files: ${files.length ? files.join(', ') : 'None'}`);
 
     if (files.length === 0) {
-      console.log('No test files found. Exiting.');
+      console.log('No test files found. Listing directory contents...');
+      const dirContents = fs.readdirSync(testsRoot, { recursive: true });
+      console.log(`Directory contents: ${dirContents.join(', ')}`);
       return;
     }
 
     // Add test files to Mocha
     console.log('Adding test files to Mocha...');
-    files.forEach((f: string) => {
+    for (const f of files) {
       const testFilePath = path.resolve(testsRoot, f);
       console.log(`Checking test file: ${testFilePath}`);
       if (fs.existsSync(testFilePath)) {
@@ -49,7 +57,7 @@ export async function run(): Promise<void> {
       } else {
         console.log(`Test file does not exist: ${testFilePath}`);
       }
-    });
+    }
 
     // Run Mocha tests
     console.log('Running Mocha tests...');
