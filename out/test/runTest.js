@@ -22,10 +22,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = run;
 const path = __importStar(require("path"));
-const Mocha = __importStar(require("mocha"));
+const mocha_1 = __importDefault(require("mocha"));
 const glob = __importStar(require("glob"));
 const util_1 = require("util");
 const test_electron_1 = require("@vscode/test-electron");
@@ -33,7 +36,7 @@ const globAsync = (0, util_1.promisify)(glob.glob);
 async function main() {
     try {
         // Initialize Mocha
-        const mocha = new Mocha({
+        const mocha = new mocha_1.default({
             ui: 'tdd',
             color: true
         });

@@ -1,5 +1,5 @@
 import * as path from 'path';
-import * as Mocha from 'mocha';
+import Mocha from 'mocha';
 import * as glob from 'glob';
 import { promisify } from 'util';
 import { runTests } from '@vscode/test-electron';
