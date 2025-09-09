@@ -30,45 +30,72 @@ exports.run = run;
 const path = __importStar(require("path"));
 const mocha_1 = __importDefault(require("mocha"));
 const glob = __importStar(require("glob"));
+const fs = __importStar(require("fs"));
 const util_1 = require("util");
 const globAsync = (0, util_1.promisify)(glob.glob);
 async function run() {
     console.log('Starting test runner...');
     try {
         // Initialize Mocha
+        console.log('Initializing Mocha...');
         const mocha = new mocha_1.default({
             ui: 'tdd',
             color: true,
-            timeout: 10000 // Increase timeout for debugging
+            timeout: 10000
         });
         // Resolve test root directory
         const testsRoot = path.resolve(__dirname, '..');
         console.log(`Test root directory: ${testsRoot}`);
+        // Check if test directory exists
+        if (!fs.existsSync(testsRoot)) {
+            console.error(`Test root directory does not exist: ${testsRoot}`);
+            return;
+        }
         // Find test files
+        console.log('Searching for test files...');
         const files = await globAsync('**/*.test.js', { cwd: testsRoot });
         console.log(`Found test files: ${files.length ? files : 'None'}`);
         if (files.length === 0) {
-            console.log('No test files found. Exiting.');
-            return;
+            console.log('No test files found. Checking synchronously...');
+            const syncFiles = glob.sync('**/*.test.js', { cwd: testsRoot });
+            console.log(`Synchronous check found: ${syncFiles.length ? syncFiles : 'None'}`);
+            if (syncFiles.length === 0) {
+                console.log('No test files found. Exiting.');
+                return;
+            }
+            files.push(...syncFiles);
         }
         // Add test files to Mocha
+        console.log('Adding test files to Mocha...');
         files.forEach((f) => {
             const testFilePath = path.resolve(testsRoot, f);
-            console.log(`Adding test file: ${testFilePath}`);
-            mocha.addFile(testFilePath);
+            console.log(`Checking test file: ${testFilePath}`);
+            if (fs.existsSync(testFilePath)) {
+                console.log(`Adding test file: ${testFilePath}`);
+                mocha.addFile(testFilePath);
+            }
+            else {
+                console.log(`Test file does not exist: ${testFilePath}`);
+            }
         });
         // Run Mocha tests
+        console.log('Running Mocha tests...');
         await new Promise((resolve, reject) => {
-            console.log('Running Mocha tests...');
-            mocha.run((failures) => {
-                console.log(`Mocha tests completed with ${failures} failures.`);
-                if (failures > 0) {
-                    reject(new Error(`${failures} tests failed.`));
-                }
-                else {
-                    resolve();
-                }
-            });
+            try {
+                mocha.run((failures) => {
+                    console.log(`Mocha tests completed with ${failures} failures.`);
+                    if (failures > 0) {
+                        reject(new Error(`${failures} tests failed.`));
+                    }
+                    else {
+                        resolve();
+                    }
+                });
+            }
+            catch (err) {
+                console.error(`Mocha execution error: ${err}`);
+                reject(err);
+            }
         });
     }
     catch (err) {
