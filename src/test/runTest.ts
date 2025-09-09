@@ -2,11 +2,10 @@ import * as path from 'path';
 import Mocha from 'mocha';
 import * as glob from 'glob';
 import { promisify } from 'util';
-import { runTests } from '@vscode/test-electron';
 
 const globAsync = promisify(glob.glob);
 
-async function main(): Promise<void> {
+export async function run(): Promise<void> {
   try {
     // Initialize Mocha
     const mocha = new Mocha({
@@ -43,21 +42,4 @@ async function main(): Promise<void> {
     console.error(`Test runner error: ${err}`);
     throw err;
   }
-}
-
-export async function run(): Promise<void> {
-  try {
-    // Run tests using @vscode/test-electron
-    await runTests({
-      extensionDevelopmentPath: path.resolve(__dirname, '../../'),
-      extensionTestsPath: path.resolve(__dirname, './'),
-      launchArgs: ['--disable-extensions'] // Disable other extensions during testing
-    });
-  } catch (err) {
-    console.error(`Failed to run tests: ${err}`);
-    throw err;
-  }
-
-  // Run Mocha tests
-  await main();
 }
