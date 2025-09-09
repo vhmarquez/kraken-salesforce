@@ -29,13 +29,14 @@ const memfs_1 = require("memfs");
 const path = __importStar(require("path"));
 suite('SfdxContext Test Suite', () => {
     test('getProjectJson should parse sfdx-project.json', () => {
-        const vol = (0, memfs_1.create)();
+        const vol = new memfs_1.Volume();
+        const fs = (0, memfs_1.createFsFromVolume)(vol);
         const mockPath = '/mock-project';
-        vol.mkdirSync(mockPath, { recursive: true });
-        vol.writeFileSync(path.join(mockPath, 'sfdx-project.json'), JSON.stringify({ packageDirectories: [{ path: 'force-app' }] }));
+        fs.mkdirSync(mockPath, { recursive: true });
+        fs.writeFileSync(path.join(mockPath, 'sfdx-project.json'), JSON.stringify({ packageDirectories: [{ path: 'force-app' }] }));
         // Mock fs with memfs
         const originalFs = require('fs');
-        require('fs').__proto__ = vol;
+        require('fs').__proto__ = fs;
         const context = new sfdxContext_1.SfdxContext(mockPath);
         const json = context.getProjectJson();
         assert.deepStrictEqual(json?.packageDirectories, [{ path: 'force-app' }]);
