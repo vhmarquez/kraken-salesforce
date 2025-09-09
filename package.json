@@ -22,7 +22,7 @@
     "compile": "tsc -p ./ && esbuild ./out/extension.js --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
     "watch": "tsc -watch -p ./ && esbuild ./out/extension.js --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --watch",
     "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
+    "lint": "eslint src",
     "test": "vscode-test"
   },
   "devDependencies": {
