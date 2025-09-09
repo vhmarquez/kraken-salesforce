@@ -23,7 +23,8 @@
     "watch": "tsc -watch -p ./ && esbuild ./out/extension.js --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --watch",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "test-fallback": "node ./out/test/runTestFallback.js"
   },
   "devDependencies": {
     "@types/vscode": "^1.82.0",
