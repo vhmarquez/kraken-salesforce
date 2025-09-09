@@ -31,7 +31,9 @@ const vscodeMock = {
     },
     extensions: {
         getExtension: (extensionId) => ({
-            activate: async () => { },
+            activate: async () => {
+                console.log(`Activating extension: ${extensionId}`);
+            },
             isActive: true
         })
     }
