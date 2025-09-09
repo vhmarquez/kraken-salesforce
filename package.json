@@ -1,0 +1,52 @@
+{
+  "name": "kraken-salesforce",
+  "displayName": "Salesforce Grok Accelerator",
+  "description": "Accelerate Salesforce development with Grok AI, CLI, and SFDX integration.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.82.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Extension Packs"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:salesforceGrok.helloWorld"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "salesforceGrok.helloWorld",
+        "title": "Salesforce Grok: Hello World"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./ && esbuild ./out/extension.js --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
+    "watch": "tsc -watch -p ./ && esbuild ./out/extension.js --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --watch",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.82.0",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
+    "eslint": "^8.57.0",
+    "typescript": "^5.1.6",
+    "@vscode/test-electron": "^2.3.8",
+    "memfs": "^4.6.0",
+    "@types/mocha": "^10.0.8",
+    "mocha": "^10.7.3",
+    "glob": "^7.2.3",
+    "lru-cache": "^10.4.3",
+    "esbuild": "^0.20.0"
+  },
+  "resolutions": {
+    "minimatch": "^3.1.2"
+  }
+}
