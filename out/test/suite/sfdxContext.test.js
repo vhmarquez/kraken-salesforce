@@ -33,16 +33,18 @@ const createMockFs = () => {
     const mockFs = (0, memfs_1.createFsFromVolume)(vol);
     return {
         existsSync: (filePath) => mockFs.existsSync(filePath),
-        readFileSync: (filePath, encoding) => mockFs.readFileSync(filePath, encoding)
+        readFileSync: (filePath, encoding) => mockFs.readFileSync(filePath, encoding),
+        mkdirSync: (filePath, options) => mockFs.mkdirSync(filePath, options),
+        writeFileSync: (filePath, data) => mockFs.writeFileSync(filePath, data),
+        readdirSync: (filePath, options) => mockFs.readdirSync(filePath, options)
     };
 };
 suite('SfdxContext Test Suite', () => {
     test('getProjectJson should parse sfdx-project.json', () => {
         const mockFs = createMockFs();
         const mockPath = '/mock-project';
-        mockFs.mkdirSync?.(mockPath, { recursive: true });
-        mockFs.writeFileSync?.(path.join(mockPath, 'sfdx-project.json'), JSON.stringify({ packageDirectories: [{ path: 'force-app' }] }));
-        // Create SfdxContext with mocked fs
+        mockFs.mkdirSync(mockPath, { recursive: true });
+        mockFs.writeFileSync(path.join(mockPath, 'sfdx-project.json'), JSON.stringify({ packageDirectories: [{ path: 'force-app' }] }));
         const context = new sfdxContext_1.SfdxContext(mockPath, mockFs);
         const json = context.getProjectJson();
         assert.deepStrictEqual(json?.packageDirectories, [{ path: 'force-app' }]);
