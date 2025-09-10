@@ -8,7 +8,11 @@ function log(message: string): void {
 log('Test runner script loaded');
 log('Node version: ' + process.version);
 log('Current working directory: ' + process.cwd());
-log('Mocha module: ' + require.resolve('mocha'));
+try {
+  log('Mocha module: ' + require.resolve('mocha'));
+} catch (err) {
+  log(`Error resolving Mocha module: ${err}`);
+}
 
 export function run(): void {
   log('Entering run function...');
@@ -27,11 +31,14 @@ export function run(): void {
     return;
   }
 
+  const testsRoot = path.resolve(__dirname, '..');
+  log(`Test root directory: ${testsRoot}`);
+
   const testFiles = [
     'suite/extension.test.js',
     'suite/salesforceCli.test.js',
     'suite/sfdxContext.test.js'
-  ].map(f => path.resolve(__dirname, '..', f));
+  ].map(f => path.resolve(testsRoot, f));
 
   log('Test files: ' + JSON.stringify(testFiles));
 
