@@ -33,8 +33,9 @@ const glob = __importStar(require("glob"));
 const fs = __importStar(require("fs"));
 const util_1 = require("util");
 const globAsync = (0, util_1.promisify)(glob.glob);
+console.log('Test runner script loaded at:', new Date().toISOString());
 async function run() {
-    console.log('Starting test runner at:', new Date().toISOString());
+    console.log('Starting test execution...');
     console.log('Node version:', process.version);
     console.log('Current working directory:', process.cwd());
     try {
@@ -44,7 +45,7 @@ async function run() {
             color: true,
             timeout: 15000
         });
-        const testsRoot = path.resolve(__dirname, '..');
+        const testsRoot = path.resolve(__dirname, '../suite');
         console.log(`Test root directory: ${testsRoot}`);
         if (!fs.existsSync(testsRoot)) {
             console.error(`Test root directory does not exist: ${testsRoot}`);
@@ -52,7 +53,7 @@ async function run() {
         }
         console.log(`Test root directory exists: ${testsRoot}`);
         console.log('Searching for test files...');
-        const files = await globAsync('**/*.test.js', { cwd: testsRoot });
+        const files = await globAsync('*.test.js', { cwd: testsRoot });
         console.log(`Found test files: ${files.length ? files.join(', ') : 'None'}`);
         if (files.length === 0) {
             console.log('No test files found. Listing directory contents...');
