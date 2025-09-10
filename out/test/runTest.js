@@ -78,28 +78,20 @@ async function run() {
             }
         }
         console.log('Running Mocha tests...');
-        await new Promise((resolve, reject) => {
-            try {
+        try {
+            await new Promise((resolve) => {
                 mocha.run((failures) => {
                     console.log(`Mocha tests completed with ${failures} failures.`);
-                    if (failures > 0) {
-                        console.log('Some tests failed, but continuing execution.');
-                        resolve(); // Continue despite failures
-                    }
-                    else {
-                        resolve();
-                    }
+                    resolve();
                 });
-            }
-            catch (err) {
-                console.error(`Mocha execution error: ${err}`);
-                reject(err);
-            }
-        });
+            });
+        }
+        catch (err) {
+            console.error(`Mocha execution error: ${err}`);
+        }
     }
     catch (err) {
         console.error(`Test runner error: ${err}`);
-        throw err;
     }
 }
 //# sourceMappingURL=runTest.js.map

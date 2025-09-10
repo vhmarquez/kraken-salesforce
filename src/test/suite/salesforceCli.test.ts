@@ -20,10 +20,21 @@ class MockOutputChannel {
 suite('SalesforceCli Test Suite', () => {
   test('execute should run sfdx command', async function () {
     // Check if Salesforce CLI is installed
+    let cliAvailable = false;
     try {
-      await exec('sfdx --version');
-    } catch (err) {
-      this.skip(); // Skip test if CLI is not installed
+      const { stdout } = await exec('sfdx --version');
+      if (stdout.includes('sfdx-cli')) {
+        cliAvailable = true;
+      }
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      console.log('Salesforce CLI not found, skipping test:', errorMessage);
+      this.skip();
+    }
+
+    if (!cliAvailable) {
+      console.log('Salesforce CLI version check failed, skipping test');
+      this.skip();
     }
 
     const mockChannel = new MockOutputChannel();

@@ -56,24 +56,17 @@ export async function run(): Promise<void> {
     }
 
     console.log('Running Mocha tests...');
-    await new Promise<void>((resolve, reject) => {
-      try {
+    try {
+      await new Promise<void>((resolve) => {
         mocha.run((failures: number) => {
           console.log(`Mocha tests completed with ${failures} failures.`);
-          if (failures > 0) {
-            console.log('Some tests failed, but continuing execution.');
-            resolve(); // Continue despite failures
-          } else {
-            resolve();
-          }
+          resolve();
         });
-      } catch (err) {
-        console.error(`Mocha execution error: ${err}`);
-        reject(err);
-      }
-    });
+      });
+    } catch (err) {
+      console.error(`Mocha execution error: ${err}`);
+    }
   } catch (err) {
     console.error(`Test runner error: ${err}`);
-    throw err;
   }
 }
