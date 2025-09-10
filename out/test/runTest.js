@@ -29,61 +29,61 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = run;
 const path = __importStar(require("path"));
 const mocha_1 = __importDefault(require("mocha"));
-console.log('Test runner script loaded at:', new Date().toISOString());
-console.log('Node version:', process.version);
-console.log('Current working directory:', process.cwd());
-console.log('Mocha module:', require.resolve('mocha'));
-async function run() {
-    console.log('Starting test execution...');
+function log(message) {
+    console.log(`[${new Date().toISOString()}] ${message}`);
+}
+log('Test runner script loaded');
+log('Node version: ' + process.version);
+log('Current working directory: ' + process.cwd());
+log('Mocha module: ' + require.resolve('mocha'));
+function run() {
+    log('Starting test execution...');
     try {
-        console.log('Initializing Mocha...');
+        log('Initializing Mocha...');
         const mocha = new mocha_1.default({
             ui: 'tdd',
             color: true,
             timeout: 15000
         });
+        const testsRoot = path.resolve(__dirname, '..');
+        log(`Test root directory: ${testsRoot}`);
         const testFiles = [
             'suite/extension.test.js',
             'suite/salesforceCli.test.js',
             'suite/sfdxContext.test.js'
-        ].map(f => path.resolve(__dirname, '..', f));
-        console.log('Test files:', testFiles);
+        ].map(f => path.resolve(testsRoot, f));
+        log('Test files: ' + JSON.stringify(testFiles));
+        const fs = require('fs');
         for (const testFile of testFiles) {
-            console.log(`Checking test file: ${testFile}`);
-            try {
-                const fs = require('fs');
-                if (fs.existsSync(testFile)) {
-                    console.log(`Adding test file: ${testFile}`);
-                    mocha.addFile(testFile);
-                }
-                else {
-                    console.log(`Test file does not exist: ${testFile}`);
-                }
+            log(`Checking test file: ${testFile}`);
+            if (fs.existsSync(testFile)) {
+                log(`Adding test file: ${testFile}`);
+                mocha.addFile(testFile);
             }
-            catch (err) {
-                console.error(`Error checking test file ${testFile}:`, err);
+            else {
+                log(`Test file does not exist: ${testFile}`);
             }
         }
         if (mocha.suite.tests.length === 0 && mocha.suite.suites.length === 0) {
-            console.log('No tests added to Mocha. Exiting.');
+            log('No tests added to Mocha. Exiting.');
             return;
         }
-        console.log('Running Mocha tests...');
-        await new Promise((resolve) => {
-            mocha.run((failures) => {
-                console.log(`Mocha tests completed with ${failures} failures.`);
-                resolve();
-            }).on('start', () => {
-                console.log('Mocha test suite started.');
-            }).on('end', () => {
-                console.log('Mocha test suite ended.');
-            }).on('fail', (test, err) => {
-                console.error(`Test failed: ${test.title}: ${err.message}`);
-            });
+        log('Running Mocha tests...');
+        mocha.run((failures) => {
+            log(`Mocha tests completed with ${failures} failures.`);
+        })
+            .on('start', () => {
+            log('Mocha test suite started.');
+        })
+            .on('end', () => {
+            log('Mocha test suite ended.');
+        })
+            .on('fail', (test, err) => {
+            log(`Test failed: ${test.title}: ${err.message}`);
         });
     }
     catch (err) {
-        console.error('Test runner error:', err);
+        log(`Test runner error: ${err}`);
     }
 }
 //# sourceMappingURL=runTest.js.map
