@@ -4,9 +4,13 @@ import * as glob from 'glob';
 import * as fs from 'fs';
 import { promisify } from 'util';
 
-const globAsync = promisify(glob.glob);
-
 console.log('Test runner script loaded at:', new Date().toISOString());
+console.log('Verifying module imports...');
+console.log('Mocha:', require.resolve('mocha'));
+console.log('Glob:', require.resolve('glob'));
+console.log('FS:', require.resolve('fs'));
+
+const globAsync = promisify(glob.glob);
 
 export async function run(): Promise<void> {
   console.log('Starting test execution...');
@@ -21,7 +25,7 @@ export async function run(): Promise<void> {
       timeout: 15000
     });
 
-    const testsRoot = path.resolve(__dirname, '../suite');
+    const testsRoot = path.resolve(__dirname, '..', 'suite');
     console.log(`Test root directory: ${testsRoot}`);
 
     if (!fs.existsSync(testsRoot)) {
@@ -31,8 +35,14 @@ export async function run(): Promise<void> {
     console.log(`Test root directory exists: ${testsRoot}`);
 
     console.log('Searching for test files...');
-    const files = await globAsync('*.test.js', { cwd: testsRoot });
-    console.log(`Found test files: ${files.length ? files.join(', ') : 'None'}`);
+    let files: string[] = [];
+    try {
+      files = await globAsync('*.test.js', { cwd: testsRoot });
+      console.log(`Found test files: ${files.length ? files.join(', ') : 'None'}`);
+    } catch (globErr) {
+      console.error(`Glob error: ${globErr}`);
+      return;
+    }
 
     if (files.length === 0) {
       console.log('No test files found. Listing directory contents...');
@@ -59,10 +69,12 @@ export async function run(): Promise<void> {
 
     console.log('Running Mocha tests...');
     try {
-      await new Promise<void>((resolve) => {
+      await new Promise<void>((resolve, reject) => {
         mocha.run((failures: number) => {
           console.log(`Mocha tests completed with ${failures} failures.`);
           resolve();
+        }).on('fail', (test, err) => {
+          console.error(`Test failed: ${test.title}: ${err.message}`);
         });
       });
     } catch (err) {

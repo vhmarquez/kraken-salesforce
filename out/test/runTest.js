@@ -32,8 +32,12 @@ const mocha_1 = __importDefault(require("mocha"));
 const glob = __importStar(require("glob"));
 const fs = __importStar(require("fs"));
 const util_1 = require("util");
-const globAsync = (0, util_1.promisify)(glob.glob);
 console.log('Test runner script loaded at:', new Date().toISOString());
+console.log('Verifying module imports...');
+console.log('Mocha:', require.resolve('mocha'));
+console.log('Glob:', require.resolve('glob'));
+console.log('FS:', require.resolve('fs'));
+const globAsync = (0, util_1.promisify)(glob.glob);
 async function run() {
     console.log('Starting test execution...');
     console.log('Node version:', process.version);
@@ -45,7 +49,7 @@ async function run() {
             color: true,
             timeout: 15000
         });
-        const testsRoot = path.resolve(__dirname, '../suite');
+        const testsRoot = path.resolve(__dirname, '..', 'suite');
         console.log(`Test root directory: ${testsRoot}`);
         if (!fs.existsSync(testsRoot)) {
             console.error(`Test root directory does not exist: ${testsRoot}`);
@@ -53,8 +57,15 @@ async function run() {
         }
         console.log(`Test root directory exists: ${testsRoot}`);
         console.log('Searching for test files...');
-        const files = await globAsync('*.test.js', { cwd: testsRoot });
-        console.log(`Found test files: ${files.length ? files.join(', ') : 'None'}`);
+        let files = [];
+        try {
+            files = await globAsync('*.test.js', { cwd: testsRoot });
+            console.log(`Found test files: ${files.length ? files.join(', ') : 'None'}`);
+        }
+        catch (globErr) {
+            console.error(`Glob error: ${globErr}`);
+            return;
+        }
         if (files.length === 0) {
             console.log('No test files found. Listing directory contents...');
             try {
@@ -80,10 +91,12 @@ async function run() {
         }
         console.log('Running Mocha tests...');
         try {
-            await new Promise((resolve) => {
+            await new Promise((resolve, reject) => {
                 mocha.run((failures) => {
                     console.log(`Mocha tests completed with ${failures} failures.`);
                     resolve();
+                }).on('fail', (test, err) => {
+                    console.error(`Test failed: ${test.title}: ${err.message}`);
                 });
             });
         }
