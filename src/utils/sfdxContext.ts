@@ -10,15 +10,17 @@ interface SfdxProject {
 
 export class SfdxContext {
   private projectPath: string;
+  private fs: typeof fs;
 
-  constructor(projectPath: string) {
+  constructor(projectPath: string, fsImpl: typeof fs = fs) {
     this.projectPath = projectPath;
+    this.fs = fsImpl;
   }
 
   getProjectJson(): SfdxProject | null {
     const filePath = path.join(this.projectPath, 'sfdx-project.json');
-    if (fs.existsSync(filePath)) {
-      const content = fs.readFileSync(filePath, 'utf-8');
+    if (this.fs.existsSync(filePath)) {
+      const content = this.fs.readFileSync(filePath, 'utf-8');
       return JSON.parse(content) as SfdxProject;
     }
     return null;
@@ -26,8 +28,8 @@ export class SfdxContext {
 
   getMetadataFiles(): string[] {
     const metadataDir = path.join(this.projectPath, 'force-app', 'main', 'default');
-    if (fs.existsSync(metadataDir)) {
-      return fs.readdirSync(metadataDir, { recursive: true }) as string[];
+    if (this.fs.existsSync(metadataDir)) {
+      return this.fs.readdirSync(metadataDir, { recursive: true }) as string[];
     }
     return [];
   }

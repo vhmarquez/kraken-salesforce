@@ -14,7 +14,7 @@ export default [
         __dirname: 'readonly',
         require: 'readonly',
         console: 'readonly',
-        process: 'readonly' // Add Node.js process
+        process: 'readonly'
       }
     },
     plugins: {
@@ -32,7 +32,8 @@ export default [
     files: ['src/test/**/*.ts'],
     rules: {
       '@typescript-eslint/no-var-requires': 'off',
-      'no-console': 'off'
+      'no-console': 'off',
+      '@typescript-eslint/no-import-assign': 'off' // Allow fs mocking in tests
     }
   }
 ];
