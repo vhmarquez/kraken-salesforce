@@ -32,24 +32,24 @@ const mocha_1 = __importDefault(require("mocha"));
 const glob = __importStar(require("glob"));
 const fs = __importStar(require("fs"));
 const util_1 = require("util");
-console.log('Test runner script loaded at:', new Date().toISOString());
-console.log('Verifying module imports...');
-console.log('Mocha:', require.resolve('mocha'));
-console.log('Glob:', require.resolve('glob'));
-console.log('FS:', require.resolve('fs'));
 const globAsync = (0, util_1.promisify)(glob.glob);
 async function run() {
-    console.log('Starting test execution...');
-    console.log('Node version:', process.version);
-    console.log('Current working directory:', process.cwd());
+    console.log('Test runner script loaded at:', new Date().toISOString());
+    console.log('Verifying module imports...');
+    console.log('Mocha:', require.resolve('mocha'));
+    console.log('Glob:', require.resolve('glob'));
+    console.log('FS:', require.resolve('fs'));
     try {
+        console.log('Starting test execution...');
+        console.log('Node version:', process.version);
+        console.log('Current working directory:', process.cwd());
         console.log('Initializing Mocha...');
         const mocha = new mocha_1.default({
             ui: 'tdd',
             color: true,
             timeout: 15000
         });
-        const testsRoot = path.resolve(__dirname, '../suite');
+        const testsRoot = path.resolve(__dirname, '..');
         console.log(`Test root directory: ${testsRoot}`);
         if (!fs.existsSync(testsRoot)) {
             console.error(`Test root directory does not exist: ${testsRoot}`);
@@ -59,7 +59,7 @@ async function run() {
         console.log('Searching for test files...');
         let files = [];
         try {
-            files = await globAsync('*.test.js', { cwd: testsRoot });
+            files = await globAsync('suite/*.test.js', { cwd: testsRoot });
             console.log(`Found test files: ${files.length ? files.join(', ') : 'None'}`);
         }
         catch (globErr) {
@@ -97,6 +97,10 @@ async function run() {
                     resolve();
                 }).on('fail', (test, err) => {
                     console.error(`Test failed: ${test.title}: ${err.message}`);
+                }).on('start', () => {
+                    console.log('Mocha test suite started.');
+                }).on('end', () => {
+                    console.log('Mocha test suite ended.');
                 });
             });
         }
