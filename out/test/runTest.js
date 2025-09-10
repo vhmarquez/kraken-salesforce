@@ -49,7 +49,7 @@ async function run() {
             color: true,
             timeout: 15000
         });
-        const testsRoot = path.resolve(__dirname, '..', 'suite');
+        const testsRoot = path.resolve(__dirname, '../suite');
         console.log(`Test root directory: ${testsRoot}`);
         if (!fs.existsSync(testsRoot)) {
             console.error(`Test root directory does not exist: ${testsRoot}`);
@@ -91,7 +91,7 @@ async function run() {
         }
         console.log('Running Mocha tests...');
         try {
-            await new Promise((resolve, reject) => {
+            await new Promise((resolve) => {
                 mocha.run((failures) => {
                     console.log(`Mocha tests completed with ${failures} failures.`);
                     resolve();

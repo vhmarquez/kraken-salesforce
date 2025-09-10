@@ -25,7 +25,7 @@ export async function run(): Promise<void> {
       timeout: 15000
     });
 
-    const testsRoot = path.resolve(__dirname, '..', 'suite');
+    const testsRoot = path.resolve(__dirname, '..');
     console.log(`Test root directory: ${testsRoot}`);
 
     if (!fs.existsSync(testsRoot)) {
@@ -37,7 +37,7 @@ export async function run(): Promise<void> {
     console.log('Searching for test files...');
     let files: string[] = [];
     try {
-      files = await globAsync('*.test.js', { cwd: testsRoot });
+      files = await globAsync('suite/*.test.js', { cwd: testsRoot });
       console.log(`Found test files: ${files.length ? files.join(', ') : 'None'}`);
     } catch (globErr) {
       console.error(`Glob error: ${globErr}`);
@@ -69,7 +69,7 @@ export async function run(): Promise<void> {
 
     console.log('Running Mocha tests...');
     try {
-      await new Promise<void>((resolve, reject) => {
+      await new Promise<void>((resolve) => {
         mocha.run((failures: number) => {
           console.log(`Mocha tests completed with ${failures} failures.`);
           resolve();
