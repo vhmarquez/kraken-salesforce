@@ -27,21 +27,10 @@ const assert = __importStar(require("assert"));
 const sfdxContext_1 = require("../../utils/sfdxContext");
 const memfs_1 = require("memfs");
 const path = __importStar(require("path"));
-// Mock fs module
-const createMockFs = () => {
-    const vol = new memfs_1.Volume();
-    const mockFs = (0, memfs_1.createFsFromVolume)(vol);
-    return {
-        existsSync: (filePath) => mockFs.existsSync(filePath),
-        readFileSync: (filePath, encoding) => mockFs.readFileSync(filePath, encoding),
-        mkdirSync: (filePath, options) => mockFs.mkdirSync(filePath, options),
-        writeFileSync: (filePath, data) => mockFs.writeFileSync(filePath, data),
-        readdirSync: (filePath, options) => mockFs.readdirSync(filePath, options)
-    };
-};
 suite('SfdxContext Test Suite', () => {
     test('getProjectJson should parse sfdx-project.json', () => {
-        const mockFs = createMockFs();
+        const vol = new memfs_1.Volume();
+        const mockFs = (0, memfs_1.createFsFromVolume)(vol);
         const mockPath = '/mock-project';
         mockFs.mkdirSync(mockPath, { recursive: true });
         mockFs.writeFileSync(path.join(mockPath, 'sfdx-project.json'), JSON.stringify({ packageDirectories: [{ path: 'force-app' }] }));
