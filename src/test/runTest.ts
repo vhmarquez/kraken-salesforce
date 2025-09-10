@@ -17,18 +17,22 @@ export async function run(): Promise<void> {
       timeout: 15000
     });
 
+    const testsRoot = path.resolve(__dirname, '..');
+    console.log(`Test root directory: ${testsRoot}`);
+
     const testFiles = [
       'suite/extension.test.js',
       'suite/salesforceCli.test.js',
       'suite/sfdxContext.test.js'
-    ].map(f => path.resolve(__dirname, '..', f));
+    ].map(f => path.resolve(testsRoot, f));
 
     console.log('Test files:', testFiles);
 
     for (const testFile of testFiles) {
       console.log(`Checking test file: ${testFile}`);
       try {
-        if (require('fs').existsSync(testFile)) {
+        const fs = require('fs');
+        if (fs.existsSync(testFile)) {
           console.log(`Adding test file: ${testFile}`);
           mocha.addFile(testFile);
         } else {
@@ -39,20 +43,28 @@ export async function run(): Promise<void> {
       }
     }
 
+    if (mocha.suite.tests.length === 0 && mocha.suite.suites.length === 0) {
+      console.log('No tests added to Mocha. Exiting.');
+      return;
+    }
+
     console.log('Running Mocha tests...');
     await new Promise<void>((resolve) => {
       mocha.run((failures: number) => {
         console.log(`Mocha tests completed with ${failures} failures.`);
         resolve();
-      }).on('fail', (test, err) => {
-        console.error(`Test failed: ${test.title}: ${err.message}`);
-      }).on('start', () => {
-        console.log('Mocha test suite started.');
-      }).on('end', () => {
-        console.log('Mocha test suite ended.');
-      });
+      })
+        .on('start', () => {
+          console.log('Mocha test suite started.');
+        })
+        .on('end', () => {
+          console.log('Mocha test suite ended.');
+        })
+        .on('fail', (test, err) => {
+          console.error(`Test failed: ${test.title}: ${err.message}`);
+        });
     });
   } catch (err) {
-    console.error(`Test runner error:`, err);
+    console.error('Test runner error:', err);
   }
 }
