@@ -1,8 +1,8 @@
-import { exec } from 'child_process';
 import * as vscode from 'vscode';
-import { promisify } from 'util';
+import * as cp from 'child_process';
+import * as util from 'util';
 
-const execAsync = promisify(exec);
+const exec = util.promisify(cp.exec);
 
 export class SalesforceCli {
   private outputChannel: vscode.OutputChannel;
@@ -11,17 +11,17 @@ export class SalesforceCli {
     this.outputChannel = outputChannel;
   }
 
-  async execute(command: string): Promise<{ stdout: string; stderr: string }> {
-    this.outputChannel.appendLine(`Executing Salesforce CLI: sfdx ${command}`);
+  async execute(command: string, cliCommand: string = 'sfdx'): Promise<{ stdout: string; stderr: string }> {
     try {
-      const { stdout, stderr } = await execAsync(`sfdx ${command}`);
-      this.outputChannel.appendLine(`CLI Output: ${stdout}`);
+      const { stdout, stderr } = await exec(`${cliCommand} ${command}`);
+      this.outputChannel.appendLine(`CLI command: ${cliCommand} ${command}`);
+      this.outputChannel.appendLine(`Stdout: ${stdout}`);
       if (stderr) {
-        this.outputChannel.appendLine(`CLI Error: ${stderr}`);
+        this.outputChannel.appendLine(`Stderr: ${stderr}`);
       }
       return { stdout, stderr };
-    } catch (error) {
-      this.outputChannel.appendLine(`CLI Execution Error: ${error}`);
+    } catch (error: any) {
+      this.outputChannel.appendLine(`Error executing ${cliCommand} ${command}: ${error.message}`);
       throw error;
     }
   }

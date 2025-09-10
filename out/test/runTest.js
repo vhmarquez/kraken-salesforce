@@ -40,6 +40,7 @@ try {
 }
 catch (err) {
     log(`Error resolving Mocha module: ${err}`);
+    return;
 }
 function run() {
     log('Entering run function...');
@@ -65,10 +66,10 @@ function run() {
         'suite/sfdxContext.test.js'
     ].map(f => path.resolve(testsRoot, f));
     log('Test files: ' + JSON.stringify(testFiles));
-    const fs = require('fs');
-    for (const testFile of testFiles) {
-        log(`Processing test file: ${testFile}`);
-        try {
+    try {
+        const fs = require('fs');
+        for (const testFile of testFiles) {
+            log(`Processing test file: ${testFile}`);
             log(`Checking if test file exists: ${testFile}`);
             if (fs.existsSync(testFile)) {
                 log(`Adding test file to Mocha: ${testFile}`);
@@ -79,9 +80,10 @@ function run() {
                 log(`Test file does not exist: ${testFile}`);
             }
         }
-        catch (err) {
-            log(`Error processing test file ${testFile}: ${err}`);
-        }
+    }
+    catch (err) {
+        log(`Error processing test files: ${err}`);
+        return;
     }
     log(`Mocha suite state: tests=${mocha.suite.tests.length}, suites=${mocha.suite.suites.length}`);
     if (mocha.suite.tests.length === 0 && mocha.suite.suites.length === 0) {

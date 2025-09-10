@@ -21,15 +21,25 @@ suite('SalesforceCli Test Suite', () => {
   test('execute should run sfdx command', async function () {
     // Check if Salesforce CLI is installed
     let cliAvailable = false;
+    let cliCommand = 'sfdx';
     try {
       const { stdout } = await exec('sfdx --version');
-      if (stdout.includes('sfdx-cli')) {
+      if (stdout.includes('sfdx-cli') || stdout.includes('@salesforce/cli')) {
         cliAvailable = true;
       }
     } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      console.log('Salesforce CLI not found, skipping test:', errorMessage);
-      this.skip();
+      // Try 'sf' command for newer CLI versions
+      try {
+        const { stdout } = await exec('sf --version');
+        if (stdout.includes('@salesforce/cli')) {
+          cliAvailable = true;
+          cliCommand = 'sf';
+        }
+      } catch (sfErr: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+        console.log('Salesforce CLI not found, skipping test:', errorMessage);
+        this.skip();
+      }
     }
 
     if (!cliAvailable) {
@@ -39,7 +49,7 @@ suite('SalesforceCli Test Suite', () => {
 
     const mockChannel = new MockOutputChannel();
     const sfCli = new SalesforceCli(mockChannel);
-    const { stdout } = await sfCli.execute('version');
-    assert.ok(stdout.includes('sfdx-cli'), 'Expected sfdx-cli version in stdout');
+    const { stdout } = await sfCli.execute('version', cliCommand);
+    assert.ok(stdout.includes('@salesforce/cli') || stdout.includes('sfdx-cli'), 'Expected Salesforce CLI version in stdout');
   });
 });

@@ -6,8 +6,14 @@
   "engines": {
     "vscode": "^1.82.0"
   },
-  "categories": ["Programming Languages", "Extension Packs"],
-  "activationEvents": ["onStartupFinished", "onCommand:salesforceGrok.helloWorld"],
+  "categories": [
+    "Programming Languages",
+    "Extension Packs"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:salesforceGrok.helloWorld"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -27,19 +33,19 @@
     "test-fallback": "node ./out/test/runTestFallback.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.82.0",
+    "@types/mocha": "^10.0.8",
     "@types/node": "20.x",
+    "@types/vscode": "^1.82.0",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.0.2",
-    "eslint": "^8.56.0",
-    "typescript": "5.5.4",
     "@vscode/test-electron": "^2.3.8",
-    "memfs": "^4.6.0",
-    "@types/mocha": "^10.0.8",
-    "mocha": "^10.7.3",
+    "esbuild": "^0.25.9",
+    "eslint": "^8.56.0",
     "glob": "^7.2.3",
     "lru-cache": "^10.4.3",
-    "esbuild": "^0.20.0"
+    "memfs": "^4.6.0",
+    "mocha": "^10.7.3",
+    "typescript": "5.5.4"
   },
   "resolutions": {
     "minimatch": "3.1.2",
