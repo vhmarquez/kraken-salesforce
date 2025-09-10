@@ -37,38 +37,52 @@ log('Node version: ' + process.version);
 log('Current working directory: ' + process.cwd());
 log('Mocha module: ' + require.resolve('mocha'));
 function run() {
-    log('Starting test execution...');
+    log('Entering run function...');
+    let mocha = null;
     try {
-        log('Initializing Mocha...');
-        const mocha = new mocha_1.default({
+        log('Creating Mocha instance...');
+        mocha = new mocha_1.default({
             ui: 'tdd',
             color: true,
             timeout: 15000
         });
-        const testsRoot = path.resolve(__dirname, '..');
-        log(`Test root directory: ${testsRoot}`);
-        const testFiles = [
-            'suite/extension.test.js',
-            'suite/salesforceCli.test.js',
-            'suite/sfdxContext.test.js'
-        ].map(f => path.resolve(testsRoot, f));
-        log('Test files: ' + JSON.stringify(testFiles));
-        const fs = require('fs');
-        for (const testFile of testFiles) {
-            log(`Checking test file: ${testFile}`);
+        log('Mocha instance created');
+    }
+    catch (err) {
+        log(`Mocha initialization error: ${err}`);
+        return;
+    }
+    const testFiles = [
+        'suite/extension.test.js',
+        'suite/salesforceCli.test.js',
+        'suite/sfdxContext.test.js'
+    ].map(f => path.resolve(__dirname, '..', f));
+    log('Test files: ' + JSON.stringify(testFiles));
+    const fs = require('fs');
+    for (const testFile of testFiles) {
+        log(`Processing test file: ${testFile}`);
+        try {
+            log(`Checking if test file exists: ${testFile}`);
             if (fs.existsSync(testFile)) {
-                log(`Adding test file: ${testFile}`);
+                log(`Adding test file to Mocha: ${testFile}`);
                 mocha.addFile(testFile);
+                log(`Test file added: ${testFile}`);
             }
             else {
                 log(`Test file does not exist: ${testFile}`);
             }
         }
-        if (mocha.suite.tests.length === 0 && mocha.suite.suites.length === 0) {
-            log('No tests added to Mocha. Exiting.');
-            return;
+        catch (err) {
+            log(`Error processing test file ${testFile}: ${err}`);
         }
-        log('Running Mocha tests...');
+    }
+    log(`Mocha suite state: tests=${mocha.suite.tests.length}, suites=${mocha.suite.suites.length}`);
+    if (mocha.suite.tests.length === 0 && mocha.suite.suites.length === 0) {
+        log('No tests added to Mocha. Exiting.');
+        return;
+    }
+    log('Running Mocha tests...');
+    try {
         mocha.run((failures) => {
             log(`Mocha tests completed with ${failures} failures.`);
         })
@@ -83,7 +97,7 @@ function run() {
         });
     }
     catch (err) {
-        log(`Test runner error: ${err}`);
+        log(`Mocha run error: ${err}`);
     }
 }
 //# sourceMappingURL=runTest.js.map
