@@ -13,10 +13,10 @@ export function activate(context: vscode.ExtensionContext) {
       const project = await sfdxContext.initialize();
       const result = await cli.executeCommand('--version');
       vscode.window.showInformationMessage(
-        `Kraken Salesforce: CLI Version - ${result.stdout}, Project Namespace - ${project.namespace || 'None'}`
+        `Kraken Salesforce: CLI Version - ${result.stdout.trim()}, Project Namespace - ${project.namespace || 'None'}`
       );
     } catch (error) {
-      vscode.window.showErrorMessage(`Error: ${error.message}`);
+      vscode.window.showErrorMessage(`Error: ${(error as Error).message}`);
     }
   });
 

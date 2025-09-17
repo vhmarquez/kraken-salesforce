@@ -1,32 +1,40 @@
 {
   "name": "vhmarquez-kraken-salesforce",
-  "displayName": "kraken-salesforce",
-  "description": "A VS Code extention to enhance Salesforce development with Grok-powered code generation, CLI integration, and best practices.",
+  "displayName": "Kraken Salesforce",
+  "description": "A VS Code extension to enhance Salesforce development with Grok-powered code generation, CLI integration, and best practices.",
   "version": "0.0.1",
+  "publisher": "vhmarquez",
   "engines": {
     "vscode": "^1.104.0"
   },
   "categories": [
+    "Programming Languages",
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onCommand:vhmarquez-kraken-salesforce.helloWorld",
+    "onLanguage:apex",
+    "onLanguage:lwc"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "vhmarquez-kraken-salesforce.helloWorld",
-        "title": "Hello World"
+        "title": "Kraken Salesforce: Hello World"
       }
     ]
   },
   "scripts": {
     "compile": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --sourcemap",
     "watch": "esbuild src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node --sourcemap --watch",
-    "lint": "eslint src --ext ts"
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
+    "@types/sinon": "^10.0.0",
     "@types/vscode": "^1.104.0",
     "@typescript-eslint/eslint-plugin": "^8.42.0",
     "@typescript-eslint/parser": "^8.42.0",
@@ -34,7 +42,13 @@
     "@vscode/test-electron": "^2.5.2",
     "esbuild": "^0.25.9",
     "eslint": "^9.34.0",
+    "memfs": "^4.0.0",
+    "mocha": "^10.0.0",
     "npm-run-all": "^4.1.5",
+    "sinon": "^15.0.0",
     "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@salesforce/core": "^3.0.0"
   }
 }
