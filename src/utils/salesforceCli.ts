@@ -9,7 +9,7 @@ export class SalesforceCli {
 
   constructor() {
     this.outputChannel = vscode.window.createOutputChannel('Kraken Salesforce');
-    this.outputChannel.show(true);
+    this.outputChannel.show(true); // Auto-show for initial debugging
   }
 
   async executeCommand(command: string): Promise<{ stdout: string; stderr: string }> {

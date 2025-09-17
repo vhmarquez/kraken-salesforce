@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
-import * as path from 'path';
 import * as fs from 'fs';
 import { SfdxContext, SfdxProject } from '../src/context/sfdxContext';
 import * as memfs from 'memfs';
@@ -9,12 +8,13 @@ import * as memfs from 'memfs';
 describe('SfdxContext', () => {
   let context: SfdxContext;
   let workspaceStub: sinon.SinonStub;
+  let existsSyncStub: sinon.SinonStub;
+  let readFileSyncStub: sinon.SinonStub;
 
   beforeEach(() => {
     context = new SfdxContext();
-    // Mock fs with memfs
-    sinon.stub(fs, 'existsSync').returns(true);
-    sinon.stub(fs, 'readFileSync').returns(
+    existsSyncStub = sinon.stub(fs, 'existsSync').returns(true);
+    readFileSyncStub = sinon.stub(fs, 'readFileSync').returns(
       Buffer.from(JSON.stringify({
         packageDirectories: [{ path: 'force-app', default: true }],
         namespace: 'testNS',
@@ -23,7 +23,6 @@ describe('SfdxContext', () => {
     workspaceStub = sinon.stub(vscode.workspace, 'workspaceFolders').value([
       { uri: { fsPath: '/test/workspace' } } as vscode.WorkspaceFolder,
     ]);
-    // Install memfs volume for path mocking if needed
     memfs.vol.fromJSON({
       '/test/workspace/sfdx-project.json': JSON.stringify({
         packageDirectories: [{ path: 'force-app', default: true }],
@@ -50,12 +49,12 @@ describe('SfdxContext', () => {
   });
 
   it('should throw if sfdx-project.json is missing', async () => {
-    (fs.existsSync as sinon.SinonStub).returns(false);
+    existsSyncStub.returns(false);
     await expect(context.initialize()).to.be.rejectedWith('sfdx-project.json not found');
   });
 
   it('should throw if project has no package directories', async () => {
-    (fs.readFileSync as sinon.SinonStub).returns(
+    readFileSyncStub.returns(
       Buffer.from(JSON.stringify({ packageDirectories: [] } as Partial<SfdxProject>))
     );
     await expect(context.initialize()).to.be.rejectedWith('No package directories found');
